@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <set>
 #include "test.h"
-#define ROOT_DIR "/root/pku-sketch-benchmark/"
+#define ROOT_DIR "../"
 using namespace std;
 bool negative_sort_item(itemType &a, itemType &b)
 {
@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
     /* 
     datasetName+sketchName+task1+...+key1=value1+...: argv[k]   k>=2
     */
-    const int bytesPerStr = 4;
+    int bytesPerStr = 8;
     vector< vector<string> > args;
     vector<string> datasets;
     for(int n=1;n<argc;n++) {
@@ -68,7 +68,8 @@ int main(int argc, char *argv[]) {
             frequentItem.push_back(tmp);
         }
         sort(frequentItem.begin(),frequentItem.end(),negative_sort_item);
-        for(int k=0; k<args.size(); k++) {
+        printf("dataset load successfully: %s\n", datasetName.c_str());
+	for(int k=0; k<args.size(); k++) {
             vector<string> items = args[k];
             if(items[0] == datasetName) {
                 string sketchName(items[1]);
@@ -104,9 +105,11 @@ int main(int argc, char *argv[]) {
                         filename += "+"+items[j];
                     }
                     if(task=="freq") {
+			printf("start task freq\n");
                         frequencyTest(v,item2freq,*player,bytesPerStr,filename);
                     }
                     else if(task=="topk") {
+			printf("start task topk\n");
                         int k_top;
                         for(int i=0; i<keyValuePairs.size();i++){
                             tuple<string,double> keyValue = keyValuePairs[i];
@@ -115,6 +118,7 @@ int main(int argc, char *argv[]) {
                         topkTest(v,frequentItem,k_top,*player,bytesPerStr, filename,item2idx);
                     }
                     else if (task == "speed") {
+			printf("start task speed\n");
                         insertionSpeedTest(v,*player,bytesPerStr,filename);
                     }
                 }
